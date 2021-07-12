@@ -47,8 +47,17 @@ public class Studenti {
         return this.id +"\", \" "+this.emri+"\", \" "+ this.mbiemri+"\", \" "+this.city+"\" , \"  "+5+"\",  "+ this.hasPostedFlipgrids+" ,\"  "+this.group;
 
     }
-    public void addToDB ()  {
-        String query = "Insert into studentet values(\""+ this.toString()+"\")";
+    public static void readAll() throws SQLException {
+
+        while (ConnectToDB.readFromDB().next())
+        {
+
+                System.out.println(ConnectToDB.readFromDB().getString(0));
+
+        }
+    }
+    public void addToDB()  {
+        String query = "Insert into studenti values(\""+ this.toString()+"\")";
 
         try {
             ConnectToDB.writetoDB(query);
