@@ -1,9 +1,19 @@
 
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 public class Studenti {
-    private static int countid=0;
+    private static int countid;
+
+    static {
+        try {
+            countid = getLastId();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
     private int id;
     private String emri;
     private String mbiemri;
@@ -12,17 +22,29 @@ public class Studenti {
     private boolean hasPostedFlipgrids;
     int group;
 
-    public Studenti (int id, String emri, String mbiemri, String city,  int group, boolean hasPostedFlipgrids)
+    private static int getLastId() throws Exception {
+        ResultSet rs=ConnectToDB.readFromDB();
+        int i=0;
+        while(rs.next())
+            i=rs.getInt(1);
+        return i;
+    }
+    public Studenti (String emri, String mbiemri, String city,  int group, boolean hasPostedFlipgrids)
     {
         countid++;
-        this.id = id;
+        this.id = countid;
         this.emri=emri;
         this.mbiemri =mbiemri;
         this.city=city;
         this.hasPostedFlipgrids = hasPostedFlipgrids;
         this.group=group;
-
+        try {
+            readByIndex(this.id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println("A new student has been created");
+
 
     }
     public static int getCountid()
@@ -49,13 +71,39 @@ public class Studenti {
     }
     public static void readAll() throws SQLException {
 
-        while (ConnectToDB.readFromDB().next())
+        ResultSet rs=ConnectToDB.readFromDB();
+        int i=1;
+        while (rs.next())
         {
 
-                System.out.println(ConnectToDB.readFromDB().getString(0));
+            for (int j = 1; j <7 ; j++) {
+                System.out.println(rs.getMetaData().getColumnName(j) + ": "+rs.getString(j));
+
+            }
+            System.out.println("-------------------");
+
 
         }
     }
+    public static void readByIndex(int id) throws SQLException {
+        ResultSet rs=ConnectToDB.readFromDB(id);
+
+
+        while (rs.next())
+        {
+
+            for (int j = 1; j <7 ; j++) {
+                System.out.println(rs.getMetaData().getColumnName(j) + ": "+rs.getString(j));
+
+
+            }
+            System.out.println("-------------------");
+
+
+        }
+
+    }
+    // Write data to DB.
     public void addToDB()  {
         String query = "Insert into studenti values(\""+ this.toString()+"\")";
 

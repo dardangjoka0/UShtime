@@ -1,4 +1,5 @@
 import com.mysql.cj.protocol.Resultset;
+import org.springframework.lang.Nullable;
 
 import javax.swing.plaf.nimbus.State;
 import java.sql.*;
@@ -14,10 +15,12 @@ public class ConnectToDB {
     private static Statement statement = null;
     private static ResultSet resultset = null;
 
+
+    // Sinkronizim
     //connection factory
     public  static Connection setConnection (){
         try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/practicedb", "root", "Dr3n4sdr3n4s");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/practicedb",username, password);
             return connection;
         }catch (Exception e){
 
@@ -47,6 +50,7 @@ public class ConnectToDB {
     }
 
     //Read all from studentet.
+    @Nullable
     public static ResultSet readFromDB(){
 
         try {
@@ -61,5 +65,24 @@ public class ConnectToDB {
             return null;
 
         }
+
+    }
+    @Nullable
+    public static ResultSet readFromDB(int id)
+    {
+        try {
+            return  setStatement().executeQuery("select * from studenti where id="+id);
+        }
+        catch (SQLException e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }
+
+//cruda
+// stored procedures
+// depedency injection
+// Https prtokollit
+// costum annotation.
